@@ -7,7 +7,9 @@
  * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
  */
 
-require('dotenv').config();  // include the .env file
+// include the .env file
+require('dotenv').config();
+
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
@@ -38,8 +40,8 @@ var stateKey = 'spotify_auth_state';
 var app = express();
 
 app.use(express.static(__dirname + '/public'))
-   .use(cors())
-   .use(cookieParser());
+    .use(cors())
+    .use(cookieParser());
 
 app.get('/login', function(req, res) {
 
@@ -47,15 +49,15 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email playlist-modify-public';
+  var scope = 'user-read-private user-read-email';
   res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: client_id,
-      scope: scope,
-      redirect_uri: redirect_uri,
-      state: state
-    }));
+      querystring.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state
+      }));
 });
 
 app.get('/callback', function(req, res) {
@@ -69,9 +71,9 @@ app.get('/callback', function(req, res) {
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
-      querystring.stringify({
-        error: 'state_mismatch'
-      }));
+        querystring.stringify({
+          error: 'state_mismatch'
+        }));
   } else {
     res.clearCookie(stateKey);
     var authOptions = {
@@ -106,15 +108,15 @@ app.get('/callback', function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
-          }));
+            querystring.stringify({
+              access_token: access_token,
+              refresh_token: refresh_token
+            }));
       } else {
         res.redirect('/#' +
-          querystring.stringify({
-            error: 'invalid_token'
-          }));
+            querystring.stringify({
+              error: 'invalid_token'
+            }));
       }
     });
   }
